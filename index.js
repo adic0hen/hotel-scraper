@@ -10,15 +10,13 @@ const searchQueries = [
     'https://www.booking.com/searchresults.html?label=gen173nr-1FCAEoggI46AdIM1gEaGqIAQGYATG4ARfIAQzYAQHoAQH4AQKIAgGoAgO4AsLWtbcGwAIB0gIkZjg4Mzg4MjctOGU0YS00YzcyLWE3ODUtMDQ4MGFjNjU1YWYy2AIF4AIB&aid=304142&ss=Hakone%2C+Kanagawa%2C+Japan&efdco=1&lang=en-us&src=index&dest_id=-228233&dest_type=city&ac_position=0&ac_click_type=b&ac_langcode=en&ac_suggestion_list_length=5&search_selected=true&search_pageview_id=88ec5821e87501eb&checkin=2024-10-22&checkout=2024-10-24&group_adults=2&no_rooms=1&group_children=0&nflt=price%3DILS-min-1000-1%3Breview_score%3D80'
 ]
 
-Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
+Deno.cron("Scrape Booking", "*/15 * * * *", async () => {
     const alreadySeen = await kv.get(["hotels_seen"])?.value || [];
-    console.log(`already seen: ${JSON.stringify(alreadySeen)}`);
     let newHotels = [];
     for (const query of searchQueries) {
         const hotelList = await scrapeBookingData(query);
         for (const hotel of hotelList) {
             const hotelHash = await hashString(hotel.url);
-            console.log(`new hotel: ${hotelHash}`);
             newHotels.push(hotelHash);
             if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
                 continue;
@@ -28,7 +26,6 @@ Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
     }
 
     // Set the new hotels to the already seen list, remove the old ones
-    console.log(`new hotels: ${JSON.stringify(newHotels)}`);
     await kv.set(["hotels_seen"], newHotels);
 });
 
