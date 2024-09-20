@@ -23,6 +23,9 @@ async function sendMessage(hotel) {
             chat_id: chatId,
             text: message
         }),
+        headers: {
+            "Content-Type": "application/json"
+        }
     })
 
     if (!response.ok) {
