@@ -42,13 +42,15 @@ async function hashString(str) {
 
 Deno.cron("Scrape Booking", "*/10 * * * *", async () => {
     const alreadySeen = await kv.get(["hotels_seen"]) || [];
+    console.log(`already seen: ${alreadySeen}`);
     let newHotels = [];
     searchQueries.forEach(async (query) => {
         const hotelList = await scrapeBookingData(query);
         hotelList.forEach(async (hotel) => {
             const hotelHash = await hashString(hotel.url);
+            console.log(`new hotel: ${hotelHash}`);
             newHotels.push(hotelHash);
-            if (hotelHash in alreadySeen) { // Hotel has been seen before
+            if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
                 return;
             }
             await sendMessage(hotel);
@@ -56,6 +58,7 @@ Deno.cron("Scrape Booking", "*/10 * * * *", async () => {
     });
 
     // Set the new hotels to the already seen list, remove the old ones
+    console.log(`new hotels: ${newHotels}`);
     await kv.set(["hotels_seen"], newHotels);
 });
 
