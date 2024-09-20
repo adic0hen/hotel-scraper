@@ -11,8 +11,8 @@ const searchQueries = [
 ]
 
 Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
-    const alreadySeen = await kv.get(["hotels_seen"]) || [];
-    console.log(`already seen: ${alreadySeen}`);
+    const alreadySeen = await kv.get(["hotels_seen"]);
+    console.log(`already seen: ${JSON.stringify(alreadySeen)}`);
     let newHotels = [];
     searchQueries.forEach(async (query) => {
         const hotelList = await scrapeBookingData(query);
@@ -20,7 +20,7 @@ Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
             const hotelHash = await hashString(hotel.url);
             console.log(`new hotel: ${hotelHash}`);
             newHotels.push(hotelHash);
-            if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
+            if (alreadySeen?.includes(hotelHash)) { // Hotel has been seen before
                 return;
             }
             await sendMessage(hotel);
@@ -28,8 +28,12 @@ Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
     });
 
     // Set the new hotels to the already seen list, remove the old ones
-    console.log(`new hotels: ${newHotels}`);
+    console.log(`new hotels: ${JSON.stringify(newHotels)}`);
     await kv.set(["hotels_seen"], newHotels);
+});
+
+Deno.serve(async () => {
+    return new Response(`Please leave.`);
 });
 
 async function sendMessage(hotel) {
@@ -61,11 +65,3 @@ async function hashString(str) {
     const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     return hashHex;
 }
-
-
-
-Deno.serve(async () => {
-    return new Response(`Please leave.`);
-});
-
-
