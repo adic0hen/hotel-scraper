@@ -11,21 +11,21 @@ const searchQueries = [
 ]
 
 Deno.cron("Scrape Booking", "*/5 * * * *", async () => {
-    const alreadySeen = await kv.get(["hotels_seen"]);
+    const alreadySeen = await kv.get(["hotels_seen"])?.value || [];
     console.log(`already seen: ${JSON.stringify(alreadySeen)}`);
     let newHotels = [];
-    searchQueries.forEach(async (query) => {
+    for (const query of searchQueries) {
         const hotelList = await scrapeBookingData(query);
-        hotelList.forEach(async (hotel) => {
+        for (const hotel of hotelList) {
             const hotelHash = await hashString(hotel.url);
             console.log(`new hotel: ${hotelHash}`);
             newHotels.push(hotelHash);
-            if (alreadySeen?.includes(hotelHash)) { // Hotel has been seen before
-                return;
+            if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
+                continue;
             }
             await sendMessage(hotel);
-        });
-    });
+        }
+    }
 
     // Set the new hotels to the already seen list, remove the old ones
     console.log(`new hotels: ${JSON.stringify(newHotels)}`);
@@ -37,6 +37,8 @@ Deno.serve(async () => {
 });
 
 async function sendMessage(hotel) {
+    console.log(`Sending message for ${hotel.name}`);
+
     const message = `
     ${hotel.name}
     Review score: ${hotel.score}
