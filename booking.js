@@ -1,6 +1,6 @@
 import * as cheerio from 'npm:cheerio';
 
-async function scrapeBookingData(url) {
+export async function scrapeBookingData(url) {
   const response = await fetch(url);
   const html = await response.text();
   const $ = cheerio.load(html);

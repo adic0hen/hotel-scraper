@@ -1,4 +1,4 @@
-import { handler } from "./booking.js";
+import { scrapeBookingData } from "./booking.js";
 
 const kv = await Deno.openKv();
 const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
@@ -38,19 +38,19 @@ async function hashString(str) {
 }
 
 Deno.cron("Scrape Booking", "*/10 * * * *", async () => {
-    const alreadySeen = await kv.get(["hotels_seen"]);
+    const alreadySeen = await kv.get(["hotels_seen"]) || [];
     let newHotels = [];
-    for (const query of searchQueries) {
-        const hotelList = await handler(query);
-        for (const hotel of hotelList) {
+    searchQueries.forEach(async (query) => {
+        const hotelList = await scrapeBookingData(query);
+        hotelList.forEach(async (hotel) => {
             const hotelHash = await hashString(hotel.url);
             newHotels.push(hotelHash);
             if (hotelHash in alreadySeen) { // Hotel has been seen before
-                continue;
+                return;
             }
             await sendMessage(hotel);
-        }
-    }
+        });
+    });
 
     // Set the new hotels to the already seen list, remove the old ones
     await kv.set(["hotels_seen"], newHotels);
