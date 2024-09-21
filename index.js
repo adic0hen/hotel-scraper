@@ -17,7 +17,7 @@ Deno.cron("Scrape Booking", "*/15 * * * *", async () => {
     for (const query of searchQueries) {
         const hotelList = await scrapeBookingData(query);
         for (const hotel of hotelList) {
-            const hotelHash = await hashString(hotel.url);
+            const hotelHash = await hashString(hotel.url.split('html')[0]);
             if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
                 continue;
             }
