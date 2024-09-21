@@ -26,7 +26,6 @@ Deno.cron("Scrape Booking", "*/15 * * * *", async () => {
         }
     }
 
-    // Set the new hotels to the already seen list, remove the old ones
     await kv.set(["hotels_seen"], alreadySeen);
 });
 
