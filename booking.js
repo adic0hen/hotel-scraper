@@ -1,12 +1,18 @@
 import * as cheerio from 'npm:cheerio';
 
+const MAX_NUMBER_OF_HOTELS = 10;
+
 export async function scrapeBookingData(url) {
   const response = await fetch(url);
   const html = await response.text();
   const $ = cheerio.load(html);
 
   let hotelData = [];
+  let hotelCount = 0;
   $('[data-testid="property-card"]').each((_, element) => {
+    if (hotelCount >= MAX_NUMBER_OF_HOTELS) {
+      return;
+    }
     const name = $(element).find('[data-testid="title"]').text().trim();
 
     // Extract the score from the first div within the review-score div
@@ -18,6 +24,7 @@ export async function scrapeBookingData(url) {
     const price = $(element).find('[data-testid="price-and-discounted-price"]').text().trim();
 
     hotelData.push({ name, score, url, price });
+    hotelCount++;
   });
 
   return hotelData;
