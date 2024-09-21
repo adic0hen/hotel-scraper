@@ -13,7 +13,7 @@ const searchQueries = [
 ]
 
 Deno.cron("Scrape Booking", "*/15 * * * *", async () => {
-    let alreadySeen = await kv.get(["hotels_seen"])?.value || [];
+    let alreadySeen = (await kv.get(["hotels_seen"]))?.value || [];
     for (const query of searchQueries) {
         const hotelList = await scrapeBookingData(query);
         for (const hotel of hotelList) {
