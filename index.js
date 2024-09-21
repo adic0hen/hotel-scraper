@@ -36,16 +36,17 @@ async function sendMessage(hotel) {
     console.log(`Sending message for ${hotel.name}`);
 
     const message = `
-    ${hotel.name}
+    <b>${hotel.name}</b>
     Review score: ${hotel.score}
-    Price: ${hotel.price} per night
-    ${hotel.url}`;
+    Total price: ${hotel.price}
+    <a href="${hotel.url}">See on Booking</a>`;
 
     const response = await fetch(telegramApiUrl + '/sendMessage', {
         method: "POST",
         body: JSON.stringify({
             chat_id: chatId,
-            text: message
+            text: message,
+            parse_mode: "HTML"
         }),
         headers: {
             "Content-Type": "application/json"
