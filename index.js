@@ -3,7 +3,7 @@ import { scrapeBookingData } from "./booking.js";
 const kv = await Deno.openKv();
 const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
 const telegramApiUrl = `https://api.telegram.org/bot${botToken}`
-const chatId = "-826488742";
+const chatId = "-1002395888989";
 
 const searchQueries = [
     // Tokyo
