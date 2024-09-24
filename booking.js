@@ -1,14 +1,27 @@
-import * as cheerio from 'npm:cheerio';
+import * as cheerio from "npm:cheerio";
 
-const MAX_NUMBER_OF_HOTELS = 10;
+/**
+ * @typedef {Object} Hotel
+ * @property {string} name
+ * @property {number} score
+ * @property {string} url
+ * @property {string} price
+ */
+// class Hotel {
+//   constructor(name, score, url, price) {
+//     this.name = name;
+//     this.score = score;
+//     this.url = url;
+//     this.price = price;
+//   }
+// }
 
 export async function scrapeBookingData(url) {
   const response = await fetch(url);
   const html = await response.text();
   const $ = cheerio.load(html);
 
-  let hotelData = [];
-  let hotelCount = 0;
+  const hotelData = [];
   $('[data-testid="property-card"]').each((_, element) => {
     if (hotelCount >= MAX_NUMBER_OF_HOTELS) {
       return;
@@ -16,18 +29,36 @@ export async function scrapeBookingData(url) {
     const name = $(element).find('[data-testid="title"]').text().trim();
 
     // Extract the score from the first div within the review-score div
-    const scoreText = $(element).find('[data-testid="review-score"] > div:first-child').text().trim();
+    const scoreText = $(element).find(
+      '[data-testid="review-score"] > div:first-child',
+    ).text().trim();
     // Extract the numeric value from the score text
     const score = parseFloat(scoreText.match(/[\d.]+/)[0]) || null;
 
-    const url = $(element).find('a[data-testid="title-link"]').attr('href');
-    const price = $(element).find('[data-testid="price-and-discounted-price"]').text().trim();
+    const url = $(element).find('a[data-testid="title-link"]').attr("href");
+    const price = $(element).find('[data-testid="price-and-discounted-price"]')
+      .text().trim();
 
     hotelData.push({ name, score, url, price });
-    hotelCount++;
   });
 
   return hotelData;
+}
+
+export async function getHash(hotel) {
+  return await hashString(hotel.url.split("html")[0]);
+}
+
+async function hashString(str) {
+  const hashBuffer = await crypto.subtle.digest(
+    "SHA-1",
+    new TextEncoder().encode(str),
+  );
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, "0")).join(
+    "",
+  );
+  return hashHex;
 }
 
 export async function handler(url) {
@@ -38,10 +69,10 @@ export async function handler(url) {
       body: JSON.stringify(data),
     };
   } catch (error) {
-    console.error(error)
+    console.error(error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to scrape data' }),
+      body: JSON.stringify({ error: "Failed to scrape data" }),
     };
   }
 }
