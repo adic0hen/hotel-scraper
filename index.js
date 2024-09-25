@@ -113,8 +113,10 @@ app.post("/telegram", async (c) => {
                 await respond("Seen hotels cache has been completely cleared.");
             } else {
                 const hashToClear = await getHash(argument);
-                alreadySeen.filter((hash) => hash != hashToClear);
-                await kv.set(["hotels_seen"], alreadySeen);
+                await kv.set(
+                    ["hotels_seen"],
+                    alreadySeen.filter((hash) => hash != hashToClear),
+                );
                 await respond(
                     "Hotel was cleared from cache. It will be monitored once again!",
                 );
