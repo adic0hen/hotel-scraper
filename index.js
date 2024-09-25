@@ -68,12 +68,11 @@ app.post("/telegram", async (c) => {
 
         case "/list":
             await respond(
-                `Here are your currently monitored searches:\n${
-                    searchQueries.map((query, index) => {
+                `Here are your currently monitored searches:\n\n${
+                    searchQueries.map((query, idx) => {
                         const { name, checkin, checkout } = parseQuery(query);
-                        return `${
-                            index + 1
-                        }. <b>${name}</b> ${checkin} - ${checkout}`;
+                        return `<b>${idx + 1}. ${name}</b>
+                           ${checkin} - ${checkout}`;
                     }).join("\n")
                 }`,
             );
