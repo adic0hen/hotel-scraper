@@ -73,7 +73,7 @@ app.post("/telegram", async (c) => {
                         const { name, checkin, checkout } = parseQuery(query);
                         return `<b>${idx + 1}. ${name}</b>
                            ${checkin} - ${checkout}`;
-                    }).join("\n")
+                    }).join("\n\n")
                 }`,
             );
             break;
