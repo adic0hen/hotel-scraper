@@ -45,8 +45,8 @@ export async function scrapeBookingData(url) {
   return hotelData;
 }
 
-export async function getHash(hotel) {
-  return await hashString(hotel.url.split("html")[0]);
+export async function getHash(url) {
+  return await hashString(url.split("html")[0]);
 }
 
 async function hashString(str) {

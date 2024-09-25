@@ -55,6 +55,10 @@ app.post("/telegram", async (c) => {
                 );
                 break;
             }
+            if (!isValidUrl(argument)) {
+                await respond("Please provide a valid URL for monitoring.");
+                break;
+            }
             searchQueries.push(argument);
             await kv.set(["search_queries"], searchQueries);
             await respond(
@@ -159,8 +163,9 @@ Deno.cron("Scrape Booking", "*/10 * * * *", async () => {
     const alreadySeen = (await kv.get(["hotels_seen"]))?.value || [];
     for (const query of searchQueries) {
         const hotelList = await scrapeBookingData(query);
+
         for (const hotel of hotelList.slice(0, MAX_NUMBER_OF_HOTELS)) {
-            const hotelHash = await getHash(hotel);
+            const hotelHash = await getHash(hotel.url);
             if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
                 continue;
             }
@@ -186,6 +191,15 @@ async function sendHotelMessage(hotel, name, checkin, checkout) {
     <a href="${hotel.url}">See on Booking</a>`;
 
     await telegramNotifier.sendMessage(message, NOTIFICATION_CHAT_ID);
+}
+
+function isValidUrl(url) {
+    try {
+        new URL(url);
+        return true;
+    } catch (_error) {
+        return false;
+    }
 }
 
 function calculateNights(startDate, endDate) {
