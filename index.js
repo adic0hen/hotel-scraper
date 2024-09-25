@@ -33,7 +33,7 @@ app.post("/telegram", async (c) => {
     }
 
     const respond = async (msg) =>
-        await telegramNotifier.sendMessage(chatId, msg);
+        await telegramNotifier.sendMessage(msg, chatId);
 
     const searchQueries = (await kv.get(["search_queries"]))?.value || [];
     const alreadySeen = (await kv.get(["hotels_seen"]))?.value || [];
