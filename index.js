@@ -5,6 +5,7 @@ import { getHash, scrapeBookingData } from "./booking.js";
 const ADMIN_CHAT_ID = "281418284";
 const NOTIFICATION_CHAT_ID = "-1002395888989";
 const BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN");
+const SECRET_HEADER = Deno.env.get("TELEGRAM_SECRET_HEADER");
 const telegramNotifier = new TelegramNotifier(BOT_TOKEN);
 const app = new Hono();
 const kv = await Deno.openKv();
@@ -14,7 +15,7 @@ app.get("/", (c) => c.text("Please leave."));
 app.post("/telegram", async (c) => {
     // Verify the X-Telegram-Bot-Api-Secret-Token header
     const headerToken = c.req.header("X-Telegram-Bot-Api-Secret-Token");
-    if (headerToken !== BOT_TOKEN) {
+    if (headerToken !== SECRET_HEADER) {
         return c.text("Unauthorized", 401);
     }
 
