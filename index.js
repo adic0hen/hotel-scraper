@@ -23,6 +23,10 @@ app.post("/telegram", async (c) => {
     const { text, chat } = message;
     const chatId = chat.id;
 
+    console.log(
+        `Received message from telegram: chatId = ${chatId} message = ${text}`,
+    );
+
     if (chatId != ADMIN_CHAT_ID) {
         // Drop message
         return c.text("no.");
