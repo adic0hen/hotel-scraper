@@ -75,7 +75,7 @@ app.post("/telegram", async (c) => {
             );
             break;
 
-        case "unmonitor": {
+        case "/unmonitor": {
             if (!argument) {
                 await respond(
                     "Please use /unmonitor %SEARCH_NUMBER% to delete monitor.",
