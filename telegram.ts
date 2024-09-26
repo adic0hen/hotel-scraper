@@ -1,9 +1,11 @@
 class TelegramNotifier {
-    constructor(botToken) {
+    private apiUrl: string;
+
+    constructor(botToken: string) {
         this.apiUrl = `https://api.telegram.org/bot${botToken}`;
     }
 
-    async sendMessage(message, chatId) {
+    async sendMessage(message: string, chatId: string): Promise<void> {
         const response = await fetch(this.apiUrl + "/sendMessage", {
             method: "POST",
             body: JSON.stringify({
