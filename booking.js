@@ -30,13 +30,15 @@ export async function scrapeBookingData(url) {
       '[data-testid="review-score"] > div:first-child',
     ).text().trim();
     // Extract the numeric value from the score text
-    const score = parseFloat(scoreText.match(/[\d.]+/)[0]) || null;
+    const score = parseFloat(scoreText ?? scoreText.match(/[\d.]+/)[0]) || null;
 
     const url = $(element).find('a[data-testid="title-link"]').attr("href");
     const price = $(element).find('[data-testid="price-and-discounted-price"]')
       .text().trim();
 
-    hotelData.push({ name, score, url, price });
+    if (name && score && url && price) {
+      hotelData.push({ name, score, url, price });
+    }
   });
 
   return hotelData;
