@@ -223,5 +223,5 @@ function getPricePerNight(priceString, nights) {
     // Divide by 5 to get the price per night
     const pricePerNight = price / nights;
 
-    return pricePerNight;
+    return Math.round(pricePerNight);
 }
