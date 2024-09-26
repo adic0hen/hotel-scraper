@@ -23,9 +23,6 @@ export async function scrapeBookingData(url) {
 
   const hotelData = [];
   $('[data-testid="property-card"]').each((_, element) => {
-    if (hotelCount >= MAX_NUMBER_OF_HOTELS) {
-      return;
-    }
     const name = $(element).find('[data-testid="title"]').text().trim();
 
     // Extract the score from the first div within the review-score div
