@@ -17,31 +17,37 @@ import * as cheerio from "npm:cheerio";
 // }
 
 export async function scrapeBookingData(url) {
-  const response = await fetch(url);
-  const html = await response.text();
-  const $ = cheerio.load(html);
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = cheerio.load(html);
 
-  const hotelData = [];
-  $('[data-testid="property-card"]').each((_, element) => {
-    const name = $(element).find('[data-testid="title"]').text().trim();
+    return $('[data-testid="property-card"]')
+      .map((_, element) => {
+        const $element = $(element);
+        const name = $element.find('[data-testid="title"]').text().trim();
+        const scoreText = $element.find('[data-testid="review-score"] > div:first-child').text().trim();
+        const score = parseScore(scoreText);
+        const url = $element.find('a[data-testid="title-link"]').attr('href');
+        const price = $element.find('[data-testid="price-and-discounted-price"]').text().trim();
 
-    // Extract the score from the first div within the review-score div
-    const scoreText = $(element).find(
-      '[data-testid="review-score"] > div:first-child',
-    ).text().trim();
-    // Extract the numeric value from the score text
-    const score = parseFloat(scoreText ?? scoreText.match(/[\d.]+/)[0]) || null;
+        // Return the hotel data object if all required fields are present, otherwise return null
+        return (name && score && url && price) ? { name, score, url, price } : null;
+      })
+      .get() // Convert the jQuery object to a regular JavaScript array
+      .filter(Boolean); // Remove any null entries from the array
+  } catch (error) {
+    console.error('Error scraping booking data:', error);
+    return []; // Return an empty array if an error occurs
+  }
+}
 
-    const url = $(element).find('a[data-testid="title-link"]').attr("href");
-    const price = $(element).find('[data-testid="price-and-discounted-price"]')
-      .text().trim();
-
-    if (name && score && url && price) {
-      hotelData.push({ name, score, url, price });
-    }
-  });
-
-  return hotelData;
+// Helper function to parse the score from the scoreText
+function parseScore(scoreText) {
+  // Extract the first occurrence of a number (including decimal points) from the scoreText
+  const scoreMatch = scoreText.match(/[\d.]+/);
+  // If a match is found, convert it to a float; otherwise, return null
+  return scoreMatch ? parseFloat(scoreMatch[0]) : null;
 }
 
 export async function getHash(url) {
