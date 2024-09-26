@@ -171,7 +171,8 @@ Deno.cron("Scrape Booking", "*/10 * * * *", async () => {
             if (alreadySeen.includes(hotelHash)) { // Hotel has been seen before
                 continue;
             }
-            await sendHotelMessage(hotel, ...parseQuery(query));
+            const { name, checkin, checkout } = parseQuery(query); 
+            await sendHotelMessage(hotel, name, checkin, checkout);
             alreadySeen.push(hotelHash);
         }
     }
