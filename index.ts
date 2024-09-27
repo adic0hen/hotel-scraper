@@ -167,7 +167,8 @@ async function sendHotelMessage(hotel: Hotel, name: string, checkin: string, che
 	console.log(`Sending message for ${hotel.name}`);
 
 	const message = `
-	<b>${name}:</b> ${checkin} - ${checkout}
+	<b>${name}</b> 
+	${checkin} - ${checkout}
 	Review score: ${hotel.score}
 	Total price: ${hotel.price} (${
 		getPricePerNight(hotel.price, calculateNights(checkin, checkout))
