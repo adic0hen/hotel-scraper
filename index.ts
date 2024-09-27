@@ -43,7 +43,7 @@ app.post("/telegram", async (c) => {
 	const searchQueries = (await kv.get<string[]>(["search_queries"]))?.value ?? [];
 	const alreadySeen = (await kv.get<string[]>(["hotels_seen"]))?.value ?? [];
 
-	const [command, ...args] = text.toLowerCase().split(" ");
+	const [command, ...args] = text.split(" ");
 	const argument = args.join(" ");
 
 	switch (command) {
