@@ -50,7 +50,7 @@ app.post("/telegram", async (c) => {
 		case "/info":
 			await respond(
 				"Bot for getting notifications on Booking searches.\n" +
-				"All credit goes to the original author, which are not me!",
+				"All credit goes to the original authors, which are not me!",
 			);
 			break;
 
