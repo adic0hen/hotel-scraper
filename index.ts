@@ -2,8 +2,8 @@ import { Hono } from "https://deno.land/x/hono@v3.4.1/mod.ts";
 import TelegramNotifier from "./telegram.ts";
 import { getHash, scrapeBookingData, Hotel } from "./booking.ts";
 
-const ADMIN_CHAT_ID = "281418284";
-const NOTIFICATION_CHAT_ID = "-1002395888989";
+const ADMIN_CHAT_ID = "8009221299";
+const NOTIFICATION_CHAT_ID = "-4651888363";
 const BOT_TOKEN = Deno.env.get("TELEGRAM_BOT_TOKEN") ?? "";
 const SECRET_HEADER = Deno.env.get("TELEGRAM_SECRET_HEADER") ?? "";
 
