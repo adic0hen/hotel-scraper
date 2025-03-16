@@ -47,6 +47,13 @@ app.post("/telegram", async (c) => {
 	const argument = args.join(" ");
 
 	switch (command) {
+		case "/info":
+			await respond(
+				"Bot for getting notifications on Booking searches.\n" +
+				"All credit goes to the original author, which are not me!",
+			);
+			break;
+
 		case "/start":
 			await respond(
 				"Please use /monitor %BOOKING_URL% to monitor hotels.",
