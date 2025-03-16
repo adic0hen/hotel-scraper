@@ -17,7 +17,7 @@ interface SearchQuery {
 	checkout: string;
 }
 
-app.get("/", (c) => c.text("Please leave."));
+app.get("/", (c) => c.text("Please leave Adi."));
 
 app.post("/telegram", async (c) => {
 	const headerToken = c.req.header("X-Telegram-Bot-Api-Secret-Token");
